@@ -12,7 +12,6 @@ spring:
       hibernate:
         show-sql: true
         format_sql: true
-    defer-datasource-initialization: true  # 초기 데이터 로딩 활성화
     open-in-view: false
 
   # TODO: mariadb datasource
