@@ -14,6 +14,10 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    /**
+     * 구매가능 상품 조회
+     * @return 수량 > 0개 상품리스트
+     */
     public List<ProductResponse> findPossiblePurchaseProducts(){
         List<Product> possiblePurchaseProducts = productRepository.findPossiblePurchaseProducts();
         return possiblePurchaseProducts.stream().map(ProductResponse::from).toList();

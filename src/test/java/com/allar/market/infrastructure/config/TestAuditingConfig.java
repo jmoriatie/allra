@@ -1,18 +1,18 @@
-package com.allar.market.global.config;
+package com.allar.market.infrastructure.config;
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Optional;
 
-@Configuration
+@TestConfiguration
 @EnableJpaAuditing
-public class JpaConfig {
+public class TestAuditingConfig {
 
     @Bean
     public AuditorAware<String> auditorProvider() {
-        return () -> Optional.of("prod-user");
+        return () -> Optional.of("test-user");
     }
 }

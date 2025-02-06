@@ -1,8 +1,7 @@
 package com.allar.market.domain.product.repository;
 
 import com.allar.market.domain.product.domain.Product;
-import com.allar.market.global.config.TestAuditingConfig;
-import org.junit.jupiter.api.Assertions;
+import com.allar.market.infrastructure.config.TestAuditingConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("구매가능 상품 조회 - 수량이 0 이상인 상품")
+    @DisplayName("구매가능 상품 조회 - 수량이 0 초과인 상품")
     void possiblePurchaseProducts(){
         //given
         Product entity1 = Product.builder()
