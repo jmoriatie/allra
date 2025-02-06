@@ -37,11 +37,12 @@ public class Product extends BaseEntity {
     }
 
     public void decreaseQuantity(int quantity){
-        this.quantity = this.quantity + quantity;
+        if(!hasEnoughQuantity(quantity)) throw new IllegalArgumentException("상품 수량이 부족합니다.");
+        this.quantity = this.quantity - quantity;
     }
 
     public boolean hasEnoughQuantity(int quantity){
-        return this.quantity - quantity > 0;
+        return this.quantity - quantity >= 0;
     }
     private void validatePrice(BigDecimal price){
         if(price == null)
