@@ -21,29 +21,36 @@ public class Product extends BaseEntity {
     private Long id;
 
     private String name;
+    private String description;
     private int quantity;
     private BigDecimal price;
 
     @Builder
-    public Product(String name, int quantity, BigDecimal price) {
+    public Product(String name, String description, int quantity, BigDecimal price) {
         this.name = name;
         this.quantity = quantity;
+        this.description = description;
         validatePrice(price);
         this.price = price;
     }
 
     public void increaseQuantity(int quantity){
-        this.quantity = this.quantity + quantity;
+        this.quantity += quantity;
     }
 
     public void decreaseQuantity(int quantity){
-        if(!hasEnoughQuantity(quantity)) throw new IllegalArgumentException("상품 수량이 부족합니다.");
-        this.quantity = this.quantity - quantity;
+        validateQuantity(quantity);
+        this.quantity -= quantity;
     }
 
     public boolean hasEnoughQuantity(int quantity){
         return this.quantity - quantity >= 0;
     }
+
+    private void validateQuantity(int quantity){
+        if(this.quantity < quantity) throw new IllegalArgumentException("상품 수량이 부족합니다.");
+    }
+
     private void validatePrice(BigDecimal price){
         if(price == null)
             throw new IllegalArgumentException("상품 금액을 입력해주세요.");
