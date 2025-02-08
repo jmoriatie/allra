@@ -36,6 +36,11 @@ public class Cart extends BaseEntity {
         this.customer = customer;
     }
 
+    /**
+     * 장바구니 담기
+     * @param product
+     * @param quantity
+     */
     public void addItem(Product product, int quantity){
         validateProductQuantity(product, quantity); //수량부족 확인
         Optional<CartItem> foundItem = findCartItem(product.getId());
@@ -46,8 +51,15 @@ public class Cart extends BaseEntity {
         }
     }
 
+    /**
+     * 장바구니 삭제
+     * @param productId
+     */
     public void removeItem(Long productId){
-        items.removeIf(item -> item.getProduct().getId().equals(productId));
+        boolean result = items.removeIf(item -> item.getProduct().getId().equals(productId));
+        if(!result){
+            throw new IllegalArgumentException("카트에 해당 상품이 없습니다.");
+        }
     }
 
     public CartItem findItem(Long productId){
@@ -86,5 +98,10 @@ public class Cart extends BaseEntity {
         if(!product.hasEnoughQuantity(quantity)) {
             throw new IllegalArgumentException("상품 수량이 부족합니다.");
         }
+    }
+
+    // CartItems 원본 변경방지 - getter 재정의
+    public List<CartItem> getItems() {
+        return List.copyOf(this.items);
     }
 }
