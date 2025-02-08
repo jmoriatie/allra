@@ -1,8 +1,8 @@
 package com.allar.market.domain.customer.domain;
 
-import com.allar.market.domain.cart.Cart;
+import com.allar.market.domain.cart.domain.Cart;
 import com.allar.market.domain.common.BaseEntity;
-import com.allar.market.domain.order.Order;
+import com.allar.market.domain.order.domain.Order;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,6 +37,6 @@ public class Customer extends BaseEntity {
         this.email = email;
         this.password = password;
         // 고객 생성시 order는 없음
-        this.cart = new Cart(); // TODO Cart 작성 후 파라미터 넣기
+        this.cart = new Cart(this);
     }
 }
