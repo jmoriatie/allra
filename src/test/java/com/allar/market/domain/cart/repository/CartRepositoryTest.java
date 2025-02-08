@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +23,29 @@ class CartRepositoryTest {
     private CustomerRepository customerRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Test
+    @DisplayName("카트 자체생성 테스트")
+    void findAllCart() {
+        // given
+        Customer customer = Customer.builder().email("aaa@aaa.com").password("aa").build();
+        Cart cart = Cart.builder()
+                .customer(customer)
+                .build();
+        Product product = Product.builder().name("테스트 상품1")
+                .price(BigDecimal.valueOf(1000))
+                .quantity(10)
+                .build();
+        // when
+        Cart savedCart = cartRepository.save(cart);
+        Optional<Cart> foundCart = cartRepository.findById(savedCart.getId());
+
+        // then
+        assertTrue(foundCart.isPresent());
+        assertEquals(savedCart.getId(), foundCart.get().getId());
+    }
 
     @Test
     @DisplayName("기존에 있던 상품 카트에 담기 테스트")
