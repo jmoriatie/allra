@@ -3,8 +3,6 @@ package com.allar.market.presentation;
 import com.allar.market.application.cart.CartService;
 import com.allar.market.application.cart.dto.CartItemRequest;
 import com.allar.market.application.cart.dto.CartResponse;
-import com.allar.market.domain.cart.domain.Cart;
-import com.allar.market.domain.product.domain.Product;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,7 @@ public class CartController {
 
     @GetMapping("/{cartId}")
     public ResponseEntity<CartResponse> findCart(@PathVariable Long cartId){
-        CartResponse cart = cartService.findCart(cartId);
+        CartResponse cart = cartService.getCart(cartId);
         return ResponseEntity.ok(cart);
     }
 
@@ -28,7 +26,6 @@ public class CartController {
             @PathVariable Long cartId,
             @RequestBody @Valid CartItemRequest request){
         cartService.addCartItem(cartId, request);
-
         return ResponseEntity.ok().build();
     }
 
