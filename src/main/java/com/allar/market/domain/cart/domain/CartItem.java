@@ -4,7 +4,6 @@ import com.allar.market.domain.common.BaseEntity;
 import com.allar.market.domain.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,10 +29,13 @@ public class CartItem extends BaseEntity {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    @Builder
     public CartItem(int quantity, Product product) {
         this.quantity = quantity;
         this.product = product;
+    }
+
+    public void addQuantity(int quantity){
+        this.quantity += quantity;
     }
 
     public void updateQuantity(int quantity){

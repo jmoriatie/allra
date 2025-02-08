@@ -38,20 +38,21 @@ public class Cart extends BaseEntity {
 
     public void addItem(Product product, int quantity){
         validateProductQuantity(product, quantity); //수량부족 확인
-
         Optional<CartItem> foundItem = findCartItem(product.getId());
-
-        if(foundItem.isPresent()){ // 있는 상품일 경우 quantity 업데이트
-            foundItem.get().updateQuantity(quantity);
+        if(foundItem.isPresent()){ // 있는 상품일 경우 quantity 더해주기
+            foundItem.get().addQuantity(quantity); //
         }else{ // new CartItem
-            this.items.add(CartItem.builder()
-                    .product(product)
-                    .quantity(quantity).build());
+            this.items.add(new CartItem(quantity, product));
         }
     }
 
     public void removeItem(Long productId){
         items.removeIf(item -> item.getProduct().getId().equals(productId));
+    }
+
+    public CartItem findItem(Long productId){
+        return findCartItem(productId)
+                .orElseThrow(() -> new IllegalArgumentException("카트에 해당 상품이 없습니다."));
     }
 
     private Optional<CartItem> findCartItem(Long productId) {
@@ -60,6 +61,11 @@ public class Cart extends BaseEntity {
                 .findFirst();
     }
 
+    /**
+     * 카트 아이템 수량 변경
+     * @param productId
+     * @param quantity
+     */
     public void updateCartItemQuantity(Long productId, int quantity){
         CartItem foundItem = findCartItem(productId)
                 .orElseThrow(() -> new IllegalArgumentException("카트에 해당 상품이 없습니다."));
