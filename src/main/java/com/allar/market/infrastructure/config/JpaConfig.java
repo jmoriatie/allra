@@ -1,4 +1,4 @@
-package com.allar.market.infrastructure;
+package com.allar.market.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -21,7 +21,7 @@ class ProductRepositoryTest {
     private ProductRepository productRepository;
 
     @Test
-    @DisplayName("BaseEntity 생성 Test")
+    @DisplayName("BaseEntity 생성 -Auditing Test")
     void  createBaseEntity(){
         Product entity = Product.builder()
                 .name("테스트상품1")

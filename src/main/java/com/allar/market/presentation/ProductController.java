@@ -17,11 +17,13 @@ public class ProductController {
 
     private ProductService productService;
 
-    // TODO 주문 목록 조회
+    /**
+     * 구매 가능 상품 목록 조회
+     * @return
+     */
     @GetMapping
     public ResponseEntity<List<ProductResponse>> findPossiblePurchaseProducts(){
         List<ProductResponse> possiblePurchaseProducts = productService.findPossiblePurchaseProducts();
         return ResponseEntity.ok(possiblePurchaseProducts);
     }
-    // TODO 특정 Product 조회
 }
