@@ -96,4 +96,42 @@ class CartRepositoryTest {
         assertThrows(IllegalArgumentException.class,
                 () -> cart.updateCartItemQuantity(foundProduct.getId(), 200)); // 200개 수량 담기 - 오류
     }
+
+    @Test
+    @DisplayName("장바구니 아이템 삭제")
+    void removeItem(){
+        // given
+        Customer customer = Customer.builder().email("aaa@aaa.com").password("aa").build();
+        Product product = Product.builder().name("테스트 상품1")
+                .price(BigDecimal.valueOf(1000))
+                .quantity(100) // 100개 수량 product
+                .build();
+        customerRepository.save(customer);
+        productRepository.save(product);
+
+        List<Product> products = productRepository.findAll();
+        Product foundProduct = products.stream().findFirst().get();
+        Cart cart = customer.getCart();
+
+        // when
+        Long foundProductId = foundProduct.getId();
+        cart.addItem(foundProduct, 10);
+        cart.removeItem(foundProductId);
+
+        //then
+        assertThrows(IllegalArgumentException.class,
+                () -> cart.findItem(foundProductId), "카트에 해당 상품이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("오류 - 없는 아이템 장바구니 삭제 요청")
+    void removeItemException(){
+        // given, when
+        Customer customer = Customer.builder().email("aaa@aaa.com").password("aa").build();
+        customerRepository.save(customer);
+        Cart cart = customer.getCart();
+
+        // then
+        assertThrows(IllegalArgumentException.class, () -> cart.removeItem(999L));
+    }
 }
