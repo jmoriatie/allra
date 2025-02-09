@@ -122,6 +122,39 @@ class CartRepositoryTest {
     }
 
     @Test
+    @DisplayName("카트에 들어있는 전체 금액 계산")
+    void getTotalPrice() {
+        // given
+        Customer customer = Customer.builder().email("aaa@aaa.com").password("aa").build();
+        List<Product> inertProducts = List.of(Product.builder().name("테스트 상품1")
+                        .price(BigDecimal.valueOf(1000))
+                        .quantity(10)
+                        .build(),
+                Product.builder().name("테스트 상품2")
+                        .price(BigDecimal.valueOf(2000))
+                        .quantity(20)
+                        .build(),
+                Product.builder().name("테스트 상품3")
+                        .price(BigDecimal.valueOf(3000))
+                        .quantity(30)
+                        .build()
+        );
+
+        customerRepository.save(customer);
+        productRepository.saveAll(inertProducts);
+
+        List<Product> products = productRepository.findAll();
+        Cart cart = customer.getCart();
+
+        // when
+        // 1000+2000+3000 = 6,000원
+        products.forEach(p -> cart.addItem(p, 1));
+
+        // then
+        assertEquals(BigDecimal.valueOf(6000), cart.getTotalPrice());
+    }
+
+    @Test
     @DisplayName("장바구니 아이템 삭제")
     void removeItem(){
         // given

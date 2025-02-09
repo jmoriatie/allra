@@ -2,6 +2,7 @@ package com.allar.market.domain.product.domain;
 
 
 import com.allar.market.domain.common.BaseEntity;
+import com.allar.market.global.exception.exceptions.ProductQuantityNotEnoughException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,7 +50,7 @@ public class Product extends BaseEntity {
     }
 
     private void validateQuantity(int quantity){
-        if(this.quantity < quantity) throw new IllegalArgumentException("상품 수량이 부족합니다.");
+        if(this.quantity < quantity) throw new ProductQuantityNotEnoughException("상품 수량이 부족합니다.");
     }
 
     private void validatePrice(BigDecimal price){

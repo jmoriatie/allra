@@ -5,10 +5,12 @@ import com.allar.market.domain.product.domain.Product;
 import com.allar.market.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductService {
 
@@ -18,6 +20,7 @@ public class ProductService {
      * 구매가능 상품 조회
      * @return 수량 > 0개 상품리스트
      */
+    @Transactional(readOnly = true)
     public List<ProductResponse> findPossiblePurchaseProducts(){
         List<Product> possiblePurchaseProducts = productRepository.findPossiblePurchaseProducts();
         return possiblePurchaseProducts.stream().map(ProductResponse::from).toList();

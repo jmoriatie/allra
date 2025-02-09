@@ -2,7 +2,7 @@ package com.allar.market.domain.cart.domain;
 
 import com.allar.market.domain.customer.domain.Customer;
 import com.allar.market.domain.product.domain.Product;
-import org.junit.jupiter.api.AfterEach;
+import com.allar.market.global.exception.exceptions.ProductQuantityNotEnoughException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,33 +49,7 @@ class CartTest {
                 .build();
 
         // 11개 담기 - 초과
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ProductQuantityNotEnoughException.class,
                 () -> cart.addItem(product, 11), "상품 수량이 부족합니다.");
-    }
-
-    @Test
-    @DisplayName("카트에 들어있는 전체 금액 계산")
-    void getTotalPrice() {
-        // given
-        List<Product> products = List.of(Product.builder().name("테스트 상품1")
-                        .price(BigDecimal.valueOf(1000))
-                        .quantity(10)
-                        .build(),
-                Product.builder().name("테스트 상품2")
-                        .price(BigDecimal.valueOf(2000))
-                        .quantity(20)
-                        .build(),
-                Product.builder().name("테스트 상품3")
-                        .price(BigDecimal.valueOf(3000))
-                        .quantity(30)
-                        .build()
-        );
-
-        // when
-        // 1000+2000+3000 = 6,000원
-        products.forEach(p -> cart.addItem(p, 1));
-
-        // then
-        assertEquals(BigDecimal.valueOf(6000), cart.getTotalPrice());
     }
 }

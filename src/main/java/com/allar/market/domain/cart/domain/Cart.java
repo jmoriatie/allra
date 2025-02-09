@@ -3,6 +3,7 @@ package com.allar.market.domain.cart.domain;
 import com.allar.market.domain.common.BaseEntity;
 import com.allar.market.domain.customer.domain.Customer;
 import com.allar.market.domain.product.domain.Product;
+import com.allar.market.global.exception.exceptions.ProductQuantityNotEnoughException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -97,7 +98,7 @@ public class Cart extends BaseEntity {
 
     private void validateProductQuantity(Product product, int quantity) {
         if(!product.hasEnoughQuantity(quantity)) {
-            throw new IllegalArgumentException("상품 수량이 부족합니다.");
+            throw new ProductQuantityNotEnoughException("상품 수량이 부족합니다.");
         }
     }
 
