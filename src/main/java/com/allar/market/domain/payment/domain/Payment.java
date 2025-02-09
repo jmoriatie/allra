@@ -53,9 +53,20 @@ public class Payment extends BaseEntity {
         this.state = PaymentState.FAILED;
     }
 
+    public boolean isComplete(){
+        return this.state.isComplete();
+    }
+
     private void isClosedPayment() {
         if(this.state.isClosed()){
             throw new PaymentClosedException("이미 종료된 결제건 입니다.");
         }
+    }
+
+    public String getTransactionId() {
+        if(transactionId.isEmpty()){
+            return "";
+        }
+        return transactionId;
     }
 }

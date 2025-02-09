@@ -31,11 +31,7 @@ public class PaymentService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 주문 ID 입니다."));
 
-        Payment payment = Payment.builder()
-                .order(order)
-                .price(order.getTotalPrice())
-                .method(method)
-                .build();
+        Payment payment = createNewPayment(method, order);
 
         try {
             PaymentApiResponse result = paymentApiClient.processPayment(PaymentApiRequest.from(payment));
@@ -51,5 +47,13 @@ public class PaymentService {
             payment.fail();
             throw new PaymentProcessException("결제 중 오류 발생");
         }
+    }
+
+    private Payment createNewPayment(PaymentMethod method, Order order) {
+        return Payment.builder()
+                .order(order)
+                .price(order.getTotalPrice())
+                .method(method)
+                .build();
     }
 }

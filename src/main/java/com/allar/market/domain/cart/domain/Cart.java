@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "carts")
@@ -70,15 +72,13 @@ public class Cart extends BaseEntity {
      * 주문 후 장바구니 아이템 제거
      */
     public void removeOrderedCartItem(List<OrderItem> orderItems) {
-        for(CartItem ci : this.items){
-            Long ciProductId = ci.getProduct().getId();
-            for(OrderItem oi : orderItems){
-                Long oiProductId = oi.getProduct().getId();
-                if(ciProductId.equals(oiProductId)){
-                    this.items.remove(ci);
-                }
-            }
-        }
+        Set<Long> orderProductIds = orderItems.stream()
+                .map(oi -> oi.getProduct().getId())
+                .collect(Collectors.toSet());
+
+        this.items.removeIf(cartItem ->
+                orderProductIds.contains(cartItem.getProduct().getId())
+        );
     }
 
     public CartItem findItem(Long productId) {

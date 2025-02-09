@@ -13,10 +13,10 @@ public enum PaymentState {
         this.state = state;
     }
 
+    public boolean isComplete(){return this == COMPLETED;};
     public boolean isPossible(){
         return this == WAITING || this == FAILED;
     }
-
     public boolean isClosed(){
         return this == COMPLETED || this == CANCELLED || this == REFUNDED;
     }
