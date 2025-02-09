@@ -3,7 +3,10 @@ package com.allar.market.domain.order.domain;
 import com.allar.market.domain.common.BaseEntity;
 import com.allar.market.domain.customer.domain.Customer;
 import com.allar.market.domain.product.domain.Product;
+import com.allar.market.global.exception.exceptions.OrderCancelException;
+import com.allar.market.global.exception.exceptions.ProductQuantityNotEnoughException;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,21 +39,12 @@ public class Order extends BaseEntity {
     private BigDecimal totalPrice;
 
     // TODO 생성자 - payment 작성 후 필요에 따라 수정
+    @Builder
     public Order(Customer customer) {
         this.customer = customer;
         this.totalPrice = BigDecimal.ZERO;
         this.orderState = OrderState.WAITING;
     }
-
-    // TODO Order가 만들어지는 시점은 ??? -> 주문하기를 눌렀을 때
-    //  ㄴ 도메인 기준에서 도메인 상태를 변경하는 애들만 생각하자 - 결합도 낮춰야함
-    //  ㄴ 그냥 주문 또는 cart에 있는 item 들: 주문->결제
-    //  ㄴ 생성주기 동일: 고객, 주문아이템
-    //  ㄴ 생성주기 별도: Item, 결제
-    // TODO Order 생성 -> 주문하기 창에서 요청하는 기능들
-    // TODO Order 생성 -> 주문하기 창에서 요청하는 기능들
-    // TODO 배송대기중 까지 만들면됨
-    // TODO 주문 별도저장
 
     /**
      * 상품 주문
@@ -71,10 +65,25 @@ public class Order extends BaseEntity {
         this.orderState = orderState;
     }
 
+    /**
+     * 주문취소
+     */
+    public void cancel(){
+        isCancellable();
+        updateOrderState(OrderState.CANCELLED);
+    }
+
+    // 주문 취소 가능여부 조회
+    private void isCancellable() {
+        if(!this.orderState.isCancellable()){
+            throw new OrderCancelException("주문을 취소할 수 없습니다.");
+        }
+    }
+
     // 상품 재고 조회
     private void validateProductQuantity(Product product, int quantity) {
         if (!product.hasEnoughQuantity(quantity)) {
-            throw new IllegalArgumentException("상품 수량이 부족합니다.");
+            throw new ProductQuantityNotEnoughException("상품 수량이 부족합니다.");
         }
     }
 

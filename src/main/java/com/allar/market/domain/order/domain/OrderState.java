@@ -6,11 +6,15 @@ public enum OrderState {
     PREPARING("상품준비중"),
     DELIVERING("배송중"),
     COMPLETE("배송완료"),
-    CANCELLED("취소");
+    CANCELLED("취소됨");
 
     private final String state;
 
     OrderState(String state) {
         this.state = state;
+    }
+
+    public boolean isCancellable(){
+        return this == WAITING || this == PAID || this == PREPARING;
     }
 }
