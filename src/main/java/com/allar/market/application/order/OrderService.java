@@ -67,6 +67,7 @@ public class OrderService {
      * 주문 조회 - 주문완료 제외
      * @param orderId
      */
+    @Transactional(readOnly = true)
     public OrderResponse getOrderWithoutComplete(Long orderId){
         Order order = orderRepository.findByIdAndOrderStateNot(orderId, OrderState.COMPLETE)
                 .orElseThrow(() -> new IllegalArgumentException("없는 주문 ID 입니다."));

@@ -3,6 +3,7 @@ package com.allar.market.domain.order.domain;
 import com.allar.market.domain.cart.domain.Cart;
 import com.allar.market.domain.common.BaseEntity;
 import com.allar.market.domain.customer.domain.Customer;
+import com.allar.market.domain.payment.domain.Payment;
 import com.allar.market.domain.product.domain.Product;
 import com.allar.market.global.exception.exceptions.OrderCancelException;
 import com.allar.market.global.exception.exceptions.ProductQuantityNotEnoughException;
@@ -34,7 +35,8 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>(); // product의 상태캡쳐 용도 - 변경로직 최소화
 
-    // TODO payment 작성 필요
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
 
     @Enumerated(EnumType.STRING)
     private OrderState orderState;
@@ -43,7 +45,6 @@ public class Order extends BaseEntity {
     @Setter
     private String receiver;
 
-    // TODO 생성자 - payment 작성 후 필요에 따라 수정
     @Builder
     public Order(Customer customer) {
         this.customer = customer;
@@ -128,4 +129,8 @@ public class Order extends BaseEntity {
     public List<OrderItem> getItems() {
         return List.copyOf(items);
     }
+
+    // TODO 결제완료 후 로직 - 상태변경 - item 초기화 도메인로직 작성
+    // TODO 필수! 결제완료? 장바구니 관련 로직 - 장바구니 어떻게?
+    //  ㄴ 결제시 Order를 통한 Product 감소, 장바구니 감소 또는 초기화
 }
