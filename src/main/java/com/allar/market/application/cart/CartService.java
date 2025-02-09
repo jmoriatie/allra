@@ -4,11 +4,14 @@ import com.allar.market.application.cart.dto.CartItemRequest;
 import com.allar.market.application.cart.dto.CartResponse;
 import com.allar.market.domain.cart.domain.Cart;
 import com.allar.market.domain.cart.repository.CartRepository;
+import com.allar.market.domain.order.domain.OrderItem;
 import com.allar.market.domain.product.domain.Product;
 import com.allar.market.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -38,6 +41,11 @@ public class CartService {
     public void updateCartItemQuantity(Long cartId, CartItemRequest request){
         Cart cart = findCart(cartId);
         cart.updateCartItemQuantity(request.productId(), request.quantity());
+    }
+
+    public void removeOrderedCartItem(Long cartId, List<OrderItem> orderItems){
+        Cart cart = findCart(cartId);
+        cart.removeOrderedCartItem(orderItems);
     }
 
     private Cart findCart(Long cartId) {

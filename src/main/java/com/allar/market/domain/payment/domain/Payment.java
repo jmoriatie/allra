@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
@@ -30,6 +31,9 @@ public class Payment extends BaseEntity {
     private PaymentMethod method;
     private BigDecimal price;
 
+    @Setter
+    private String transactionId;
+
     @Builder
     public Payment(PaymentMethod method, BigDecimal price, Order order) {
         this.price = price;
@@ -38,9 +42,10 @@ public class Payment extends BaseEntity {
         this.state = PaymentState.WAITING;
     }
 
-    public void complete(){
+    public void complete(String transactionId){
         isClosedPayment();
         this.state = PaymentState.COMPLETED;
+        this.transactionId = transactionId;
     }
 
     public void fail(){

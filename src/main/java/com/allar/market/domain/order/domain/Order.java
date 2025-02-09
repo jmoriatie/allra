@@ -91,6 +91,13 @@ public class Order extends BaseEntity {
     }
 
     /**
+     * 주문완료
+     */
+    public void completePayment(){
+        updateOrderState(OrderState.PAID);
+    }
+
+    /**
      * 주문취소
      */
     public void cancel(){
@@ -129,8 +136,4 @@ public class Order extends BaseEntity {
     public List<OrderItem> getItems() {
         return List.copyOf(items);
     }
-
-    // TODO 결제완료 후 로직 - 상태변경 - item 초기화 도메인로직 작성
-    // TODO 필수! 결제완료? 장바구니 관련 로직 - 장바구니 어떻게?
-    //  ㄴ 결제시 Order를 통한 Product 감소, 장바구니 감소 또는 초기화
 }

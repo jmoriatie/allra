@@ -75,6 +75,16 @@ public class OrderService {
     }
 
     /**
+     * 주문 완료
+     * @param orderId
+     */
+    public void completePayment(Long orderId){
+        Order order = orderRepository.findByIdAndOrderStateNot(orderId, OrderState.COMPLETE)
+                .orElseThrow(() -> new IllegalArgumentException("없는 주문 ID 입니다."));
+        order.completePayment();
+    }
+
+    /**
      * 주문 취소
      * @param orderId
      */
