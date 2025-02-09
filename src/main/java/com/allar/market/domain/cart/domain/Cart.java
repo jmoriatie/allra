@@ -52,7 +52,7 @@ public class Cart extends BaseEntity {
         if (foundItem.isPresent()) { // 있는 상품일 경우 quantity 더해주기
             foundItem.get().addQuantity(quantity); //
         } else { // new CartItem
-            this.items.add(new CartItem(quantity, product));
+            this.items.add(new CartItem(product, quantity, this));
         }
     }
 

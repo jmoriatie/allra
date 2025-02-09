@@ -42,7 +42,7 @@ public class PaymentService {
                 payment.fail();
                 throw new PaymentProcessException("결제 중 오류 발생");
             }
-            return paymentRepository.save(payment); // TODO 실패시에도 저장 확인
+            return paymentRepository.save(payment);
         }catch (Exception e){
             payment.fail();
             throw new PaymentProcessException("결제 중 오류 발생");

@@ -20,7 +20,7 @@ class CartItemTest {
                 .quantity(10) // 100개 수량 product
                 .build();
         // when
-        CartItem cartItem = new CartItem(5, product); // 5개 담음 1000*5 = 5,000원
+        CartItem cartItem = new CartItem(product, 5); // 5개 담음 1000*5 = 5,000원
         // then
         assertEquals(BigDecimal.valueOf(5000), cartItem.getTotalPrice());
     }
