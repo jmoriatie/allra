@@ -67,12 +67,6 @@ public class Cart extends BaseEntity {
                 .orElseThrow(() -> new IllegalArgumentException("카트에 해당 상품이 없습니다."));
     }
 
-    private Optional<CartItem> findCartItem(Long productId) {
-        return this.items.stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst();
-    }
-
     /**
      * 카트 아이템 수량 변경
      * @param productId
@@ -94,11 +88,23 @@ public class Cart extends BaseEntity {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+
+    private Optional<CartItem> findCartItem(Long productId) {
+        return this.items.stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst();
+    }
+
     private void validateProductQuantity(Product product, int quantity) {
         if(!product.hasEnoughQuantity(quantity)) {
             throw new IllegalArgumentException("상품 수량이 부족합니다.");
         }
     }
+
+   // CartItem List 빈값인지 확인
+    public boolean hasCartItem(){
+        return !this.items.isEmpty(); // 있으면 true 반환
+   }
 
     // CartItems 원본 변경방지 - getter 재정의
     public List<CartItem> getItems() {
