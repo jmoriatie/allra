@@ -1,5 +1,6 @@
 package com.allar.market.domain.order.domain;
 
+import com.allar.market.domain.cart.domain.CartItem;
 import com.allar.market.domain.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -37,11 +38,23 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public void addQuantity(int quantity){
-        this.quantity += quantity;
+    private OrderItem(CartItem cartItem) {
+        this.product = cartItem.getProduct();
+        this.price = product.getPrice();
+        this.quantity = cartItem.getQuantity();
+    }
+
+    /**
+     * 장바구니 아이템으로부터 생성
+     * @param cartItem
+     * @return
+     */
+    public static OrderItem addFromCartItem(CartItem cartItem){
+        return new OrderItem(cartItem);
     }
 
     public BigDecimal getTotalPrice(){
         return this.product.getPrice().multiply(BigDecimal.valueOf(this.quantity));
     }
+
 }

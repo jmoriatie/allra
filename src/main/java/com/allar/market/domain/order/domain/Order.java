@@ -1,5 +1,6 @@
 package com.allar.market.domain.order.domain;
 
+import com.allar.market.domain.cart.domain.Cart;
 import com.allar.market.domain.common.BaseEntity;
 import com.allar.market.domain.customer.domain.Customer;
 import com.allar.market.domain.product.domain.Product;
@@ -9,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,6 +40,9 @@ public class Order extends BaseEntity {
     private OrderState orderState;
     private BigDecimal totalPrice;
 
+    @Setter
+    private String receiver;
+
     // TODO 생성자 - payment 작성 후 필요에 따라 수정
     @Builder
     public Order(Customer customer) {
@@ -47,13 +52,32 @@ public class Order extends BaseEntity {
     }
 
     /**
+     * 장바구니(Cart)에서 수량 가져오는 로직 추가
+     * @param cart
+     */
+    public void addFromCart(Cart cart){
+        // cart totalPrice -> order totalPrice
+        this.totalPrice = cart.getTotalPrice();
+        // cartItems -> orderItems
+        cart.getItems().forEach(cartItem -> {
+            addOrderItemsWithSetOrder(OrderItem.addFromCartItem(cartItem));
+        });
+    }
+
+    // Order-OrderItem 양방향 세팅
+    private void addOrderItemsWithSetOrder(OrderItem orderItem) {
+        this.items.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    /**
      * 상품 주문
      * @param product
      * @param quantity
      */
     public void addItem(Product product, int quantity) {
         validateProductQuantity(product, quantity); // 재고확인
-        this.items.add(new OrderItem(product, quantity));
+        addOrderItemsWithSetOrder(new OrderItem(product, quantity));
         calculateTotalPrice();
     }
 
