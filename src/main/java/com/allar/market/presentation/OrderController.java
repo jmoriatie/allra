@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
@@ -28,9 +30,9 @@ public class OrderController {
     }
 
     @PostMapping("/from-cart")
-    public ResponseEntity<OrderResponse> createOrderFromCart(@Valid @RequestBody CartOrderRequest cartOrderRequest) {
-        OrderResponse order = orderService.createOrderFromCart(cartOrderRequest);
-        return ResponseEntity.ok(order);
+    public CompletableFuture<ResponseEntity<OrderResponse>> createOrderFromCart(@Valid @RequestBody CartOrderRequest cartOrderRequest) {
+        CompletableFuture<OrderResponse> orderFromCart = orderService.createOrderFromCart(cartOrderRequest);
+        return orderFromCart.thenApply(ResponseEntity::ok);
     }
 
     @DeleteMapping("/{orderId}")

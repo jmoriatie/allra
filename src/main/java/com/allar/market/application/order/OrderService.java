@@ -9,17 +9,23 @@ import com.allar.market.domain.customer.domain.Customer;
 import com.allar.market.domain.customer.repository.CustomerRepository;
 import com.allar.market.domain.order.domain.Order;
 import com.allar.market.domain.order.domain.OrderState;
+import com.allar.market.domain.order.event.CreatedCartEvent;
 import com.allar.market.domain.order.repository.OrderRepository;
 import com.allar.market.domain.product.domain.Product;
 import com.allar.market.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OrderService {
+
+    private final ApplicationEventPublisher publisher;
 
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
@@ -52,15 +58,16 @@ public class OrderService {
      * 장바구니 주문
      * @param cartOrderRequest
      */
-    public OrderResponse createOrderFromCart(CartOrderRequest cartOrderRequest) {
+    public CompletableFuture<OrderResponse> createOrderFromCart(CartOrderRequest cartOrderRequest) {
         Cart cart = cartRepository.findById(cartOrderRequest.cartId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장바구니 ID 입니다."));
-        Order order = Order.builder()
-                .customer(cart.getCustomer())
-                .build();
-        order.addFromCart(cart);
 
-        return OrderResponse.from(orderRepository.save(order));
+        CompletableFuture<OrderResponse> resultFuture = new CompletableFuture<>();
+
+        CreatedCartEvent event = new CreatedCartEvent(cart, resultFuture);
+        publisher.publishEvent(event);
+
+        return resultFuture;
     }
 
     /**
