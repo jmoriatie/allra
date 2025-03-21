@@ -20,8 +20,9 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final ExternalPaymentApiClient paymentApiClient;
+    private final ExternalPaymentApiClient paymentApiClient; // TODO interface화 하고, 구현체 Infrastructure로 이동
 
+    // TODO lock
     /**
      * 결제 프로세스
      * @param orderId

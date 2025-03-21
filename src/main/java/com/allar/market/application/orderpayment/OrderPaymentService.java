@@ -16,6 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+// TODO 해당 서비스 -> domain service 로 이동 // application layer -> domain layer (domain service)
+//  ㄴ domain 에는 해당 서비스 받는 도메인로직 만들기
+//  ㄴ 이후 PaymentService layer(or 특정 서비스)에서 해당 서비스 domain 에 DI 해주기
+//  ㄴ 이유는? 여러가지 도메인이 얽혀서 한가지 도메인에 책임을 주기 어려움 + 해당 부분 도메인 로직이기 때문(애그리거트 값 변경 및 계산로직 있음)
+//  ㄴ 통합테스트 작성
+//  ㄴ README 수정 + 요구사항도 같이 추가
 @Service
 @Transactional
 @RequiredArgsConstructor

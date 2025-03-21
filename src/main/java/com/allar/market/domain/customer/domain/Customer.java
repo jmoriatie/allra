@@ -39,4 +39,19 @@ public class Customer extends BaseEntity {
         // 고객 생성시 order는 없음
         this.cart = new Cart(this);
     }
+
+    public void addOrder(Order order){
+        validateOrder(order);
+        this.orders.add(order);
+    }
+
+    public void validateOrder(Order order){
+        if(order == null || this.orders.contains(order)){
+            throw new IllegalArgumentException("Customer에 이미 존재하는 주문(Order)입니다.");
+        }
+    }
+
+    public List<Order> getOrders(){
+        return List.copyOf(this.orders);
+    }
 }

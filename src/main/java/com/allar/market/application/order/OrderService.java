@@ -5,27 +5,33 @@ import com.allar.market.application.order.dto.OrderRequest;
 import com.allar.market.application.order.dto.OrderResponse;
 import com.allar.market.domain.cart.domain.Cart;
 import com.allar.market.domain.cart.repository.CartRepository;
+import com.allar.market.domain.common.cache.OrderResultCache;
 import com.allar.market.domain.customer.domain.Customer;
 import com.allar.market.domain.customer.repository.CustomerRepository;
 import com.allar.market.domain.order.domain.Order;
 import com.allar.market.domain.order.domain.OrderState;
-import com.allar.market.domain.order.event.CreatedCartEvent;
+import com.allar.market.domain.order.event.OrderRequestedFromCartEvent;
 import com.allar.market.domain.order.repository.OrderRepository;
 import com.allar.market.domain.product.domain.Product;
 import com.allar.market.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OrderService {
 
     private final ApplicationEventPublisher publisher;
+    private final OrderResultCache orderResultCache;
 
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
@@ -56,18 +62,45 @@ public class OrderService {
 
     /**
      * 장바구니 주문
+     * TODO pub/sub
+     *  OrderResultCache -> 아키택처 변경? commandGateway 사용 등 변경
+     *  event -> kafka로 변경
      * @param cartOrderRequest
      */
     public CompletableFuture<OrderResponse> createOrderFromCart(CartOrderRequest cartOrderRequest) {
         Cart cart = cartRepository.findById(cartOrderRequest.cartId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장바구니 ID 입니다."));
 
+        // TODO future cache에 넣어서 실제 수신
+        //  -> future Processing 으로 DB 저장 (Redis?)
+        //  -> Listener 쪽에서 success or failure update 하기
         CompletableFuture<OrderResponse> resultFuture = new CompletableFuture<>();
+        orderResultCache.put(cart.getId(), resultFuture);
 
-        CreatedCartEvent event = new CreatedCartEvent(cart, resultFuture);
+        OrderRequestedFromCartEvent event = new OrderRequestedFromCartEvent(cart);
         publisher.publishEvent(event);
 
-        return resultFuture;
+        // TODO 직접수신 -> DB 불러오기 변경
+        return resultFuture
+                .whenComplete((result, ex) -> printLog(ex, cart.getId()))
+                .exceptionally(ex -> returnEmptyResponse(ex, cart.getId()));
+    }
+
+    private OrderResponse returnEmptyResponse(Throwable ex, Long cartId) {
+        log.error("주문 생성 실패: cartId={} ", cartId, ex);
+        return OrderResponse.builder()
+                .id(null)
+                .orderItems(Collections.emptyList())
+                .totalPrice(BigDecimal.ZERO)
+                .build();
+    }
+
+    private void printLog( Throwable ex, Long cartId) {
+        if(ex != null){
+             log.error("주문 생성 실패: cartId={} ", cartId, ex);
+        }else {
+            log.info("주문 생성 성공: cartId={} ", cartId);
+        }
     }
 
     /**

@@ -47,16 +47,24 @@ public class Order extends BaseEntity {
 
     @Builder
     public Order(Customer customer) {
-        this.customer = customer;
+        setCustomer(customer);
         this.totalPrice = BigDecimal.ZERO;
         this.orderState = OrderState.WAITING;
     }
 
+    private void setCustomer(Customer customer) {
+        if (customer != null) {
+            this.customer = customer;
+            customer.addOrder(this);
+        }
+    }
+
     /**
      * 장바구니(Cart)에서 수량 가져오는 로직 추가
+     *
      * @param cart
      */
-    public void addFromCart(Cart cart){
+    public void addFromCart(Cart cart) {
         // cart totalPrice -> order totalPrice
         this.totalPrice = cart.getTotalPrice();
         // cartItems -> orderItems
@@ -73,6 +81,7 @@ public class Order extends BaseEntity {
 
     /**
      * 상품 주문
+     *
      * @param product
      * @param quantity
      */
@@ -84,6 +93,7 @@ public class Order extends BaseEntity {
 
     /**
      * 주문 상태 업데이트
+     *
      * @param orderState
      */
     public void updateOrderState(OrderState orderState) {
@@ -93,21 +103,21 @@ public class Order extends BaseEntity {
     /**
      * 주문완료
      */
-    public void completePayment(){
+    public void completePayment() {
         updateOrderState(OrderState.PAID);
     }
 
     /**
      * 주문취소
      */
-    public void cancel(){
+    public void cancel() {
         isCancellable();
         updateOrderState(OrderState.CANCELLED);
     }
 
     // 주문 취소 가능여부 조회
     private void isCancellable() {
-        if(!this.orderState.isCancellable()){
+        if (!this.orderState.isCancellable()) {
             throw new OrderCancelException("주문을 취소할 수 없습니다.");
         }
     }

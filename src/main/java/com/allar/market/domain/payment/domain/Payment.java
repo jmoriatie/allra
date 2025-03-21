@@ -29,7 +29,7 @@ public class Payment extends BaseEntity {
     private PaymentState state;
     @Enumerated(value = EnumType.STRING)
     private PaymentMethod method;
-    private BigDecimal price;
+    private BigDecimal price; // TODO payment 포함 돈 부분 분리하기 Money
 
     @Setter
     private String transactionId;
