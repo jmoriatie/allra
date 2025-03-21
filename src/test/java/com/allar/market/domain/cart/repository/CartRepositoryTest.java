@@ -126,7 +126,8 @@ class CartRepositoryTest {
     void getTotalPrice() {
         // given
         Customer customer = Customer.builder().email("aaa@aaa.com").password("aa").build();
-        List<Product> inertProducts = List.of(Product.builder().name("테스트 상품1")
+        List<Product> inertProducts = List.of(
+                Product.builder().name("테스트 상품1")
                         .price(BigDecimal.valueOf(1000))
                         .quantity(10)
                         .build(),
