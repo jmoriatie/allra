@@ -28,6 +28,39 @@ spring:
     username: sa
     password:
 
+  # Kafka 설정
+  kafka:
+    bootstrap-servers: localhost:29092  # Docker로 실행한 Kafka 서버 주소
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+    consumer:
+      group-id: my-app-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.example.demo.model"  # JSON deserialize 허용할 패키지
+
+  # MongoDB 설정
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: myapp
+      username: root
+      password: example
+      authentication-database: admin
+
+# 애플리케이션 설정
+app:
+  kafka:
+    topics:
+      order-topic: order-events
+      user-topic: user-events
+
 external:
   payment:
     api:

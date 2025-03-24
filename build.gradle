@@ -37,6 +37,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     runtimeOnly 'com.h2database:h2'
+
+    // Kafka 관련 의존성
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // MongoDB 관련 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 tasks.named('test') {
